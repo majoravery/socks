@@ -1,0 +1,10 @@
+FROM node:10.16.3-alpine
+
+WORKDIR /usr/app
+
+COPY ./package.json ./
+RUN yarn install
+
+# COPY . . # no need for this now as we're using docker volumes
+
+CMD ["yarn", "start"]

@@ -1,0 +1,40 @@
+version: '2'
+services:
+  proxy:
+    image: haproxy:2.1
+    command: "haproxy -f /haproxy/haproxy-dev.cfg"
+    container_name: socks-proxy
+    ports:
+      - "3051:3051"
+    volumes:
+      - ./etc/haproxy/:/haproxy
+    depends_on:
+      - client
+      - server
+  client:
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./client
+    container_name: socks-client
+    volumes:
+      - /usr/app/node_modules/
+      - ./client:/usr/app
+    ports:
+      - "3013:3013"
+    environment:
+      - PORT=3013
+    depends_on:
+      - server
+  server:
+    restart: always
+    build:
+      dockerfile: Dockerfile.dev
+      context: ./server
+    container_name: socks-server
+    volumes:
+      - /usr/app/node_modules/
+      - ./server:/usr/app
+    ports:
+      - "8002:8002"
+    environment:
+      - PORT=8002

@@ -1,0 +1,3 @@
+#!/bin/sh
+cd /usr/app/server
+exec yarn start:live
