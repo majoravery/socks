@@ -1,10 +1,28 @@
 import React, { useState } from 'react';
 
-import Participants from '../participants';
+import Players from '../players';
 import './gameScreen.scss';
 
-const GameScreen = props => {
+const GUESS_OPTIONS = [];
+for(let i = 0; i <=9; i++) {
+  GUESS_OPTIONS.push(i);
+}
+
+const GameScreen = ({ socket, username }) => {
+  console.log(username);
   const [target, setTarget] = useState(null);
+  const [guessed, setGuessed] = useState(false);
+
+  const onGuessSubmit = guess => {
+    console.log(guess);
+    socket.emit('guess', { guess });
+    setGuessed(true);
+  };
+
+  socket.on('new-game', ({ target: incomingTarget }) => {
+    setTarget(incomingTarget);
+    setGuessed(false);
+  });
 
   const Game = () => {
     return (
@@ -13,12 +31,10 @@ const GameScreen = props => {
           <h2>Target:</h2>
           {target && <p className="game-target-number">{target}</p>}
         </div>
-        <div className="game-guess">
-          <div className="game-guess-field">
-            <label htmlFor="guess">Guess:</label>
-            <input htmlFor="guess" />
-            <button type="submit">Submit</button>
-          </div>
+        <div className={`game-options ${guessed ? 'guessed' : ''}`}>
+          {GUESS_OPTIONS.map(option => (
+            <button key={option} id={option} className="game-option" onClick={() => onGuessSubmit(option)}>{option}</button>
+          ))}
         </div>
       </div>
     );
@@ -26,7 +42,7 @@ const GameScreen = props => {
 
   return (
     <div className="gs">
-      <Participants />
+      <Players socket={socket} />
       <Game />
     </div>
   );

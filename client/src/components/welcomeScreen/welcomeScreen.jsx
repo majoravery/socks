@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { Redirect, useHistory } from 'react-router-dom';
+import React, { useRef, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 
 import './welcomeScreen.scss';
 
@@ -7,7 +7,8 @@ const WelcomeScreen = ({ socket, setUsername }) => {
   const usernameRef = useRef(null);
   const history = useHistory();
 
-  const onNameSubmit = () => {
+  const onNameSubmit = e => {
+    e.preventDefault();
     const username = usernameRef.current.value;
 
     if (!username) {
@@ -15,10 +16,9 @@ const WelcomeScreen = ({ socket, setUsername }) => {
       return;
     }
 
-    socket.emit('register', {
-      username,
-    });
+    // TODO: validate username - no spaces, no weird characters
 
+    socket.emit('register', { username });
     setUsername(username);
     history.push('/game');
   };
@@ -40,9 +40,11 @@ const WelcomeScreen = ({ socket, setUsername }) => {
       </div>
       <div className="ws-join">
         <div className="ws-name-field">
-          <label htmlFor="username">Name:</label>
-          <input id="username" name="username" type="text" ref={usernameRef} autoFocus />
-          <button type="submit" onClick={onNameSubmit}>Join</button>
+          <form onSubmit={onNameSubmit}>
+            <label htmlFor="username">Name:</label>
+            <input id="username" name="username" type="text" ref={usernameRef} autoFocus />
+            <button type="submit">Join</button>
+          </form>
         </div>
       </div>
     </div>

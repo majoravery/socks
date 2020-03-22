@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';
 import io from 'socket.io-client';
@@ -7,14 +7,13 @@ import WelcomeScreen from './components/welcomeScreen';
 import GameScreen from './components/gameScreen';
 
 const socket = io('http://localhost:8002', {
-
+  forceNew: false,
 });
 
 const PrivateRoute = ({ children, registered }) => {
   return (
     <Route
       render={({ location }) => {
-        console.log(location, registered);
         return registered
           ? children
           : (
@@ -34,6 +33,8 @@ const PrivateRoute = ({ children, registered }) => {
 
 const RootContainer = () => {
   const [username, setUsername] = useState(null);
+
+  useEffect(() => socket.disconnect, []);
 
   return (
     <BrowserRouter>
