@@ -1,3 +1,142 @@
+// Credits: https://codepen.io/MatthewShields/pen/pwrXpV?editors=0110
+$outline-width: 6px;
+$shadow-width: 4px;
+
+$button-bg: #92CD41;
+$button-bg-secondary: #76c442;
+$button-shadow: #4AA52E;
+
 .gs {
-  display: block;
+  display: flex;
+  height: 100%;
+  padding: 16px;
+}
+
+.players {
+  flex: 1 0 45%;
+  border-radius: 5px;
+  border: 4px solid #343434;
+  padding: 16px;
+  width: 100%;
+  overflow: hidden;
+
+  h2 {
+    font-size: 16px;
+    text-align: center;
+    line-height: 22px;
+  }
+
+  ul {
+    padding: 8px;
+  }
+
+  li {
+    font-size: 13px;
+    line-height: 18px;
+    color: #343434;
+  }
+
+  li.guessed {
+    color: #555;
+  }
+
+  h2 + ul {
+    margin-top: 16px;
+  }
+
+  li + li {
+    margin-top: 4px;
+  }
+}
+
+.players + .game {
+  margin-left: 2px;
+}
+
+.game {
+  border-radius: 5px;
+  border: 4px solid #343434;
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 55%;
+  justify-content: space-between;
+  padding: 16px;
+
+  h2 {
+    font-size: 16px;
+    text-align: center;
+  }
+}
+
+.game-target-number {
+  text-align: center;
+  font-size: 42px;
+  margin: 32px 0;
+}
+
+.game-options {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+
+  &.guessed {
+    pointer-events: none;
+
+    .game-option {
+      filter: brightness(0.4);
+    }
+  }
+}
+
+.game-option {
+  background: $button-bg;
+  box-shadow: inset (-$shadow-width) (-$shadow-width) 0px 0px $button-shadow;
+  color: white;
+  display: inline-block;
+  font-size: 20px;
+  margin-top: 32px;
+  outline: none;
+  padding: 16px;
+  position: relative;
+  width: 40%;
+
+  &.selected {
+    filter: none!important;
+  }
+  
+  &:hover,
+  &:focus {
+    background: $button-bg-secondary;
+    box-shadow: inset (-$shadow-width*1.5) (-$shadow-width*1.5) 0px 0px $button-shadow;
+    cursor: pointer;
+  }
+
+  &:active {
+    box-shadow: inset $shadow-width $shadow-width 0px 0px $button-shadow;
+  }
+
+  &:before,
+  &:after {
+    content: '';
+    box-sizing: content-box;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
+
+  &:before {
+    top: -$outline-width;
+    left: 0;
+    border-top: $outline-width #343434 solid;
+    border-bottom: $outline-width #343434 solid;
+  }
+
+  &:after {
+    left: -$outline-width;
+    top: 0;
+    border-left: $outline-width #343434 solid;
+    border-right: $outline-width #343434 solid;
+  }
 }

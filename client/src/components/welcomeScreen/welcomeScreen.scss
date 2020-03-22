@@ -1,3 +1,65 @@
 .ws {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 16px;
+}
+
+.ws-title {
+  font-size: 20px;
+  border-radius: 5px;
+  border: 4px solid #343434;
+  padding: 16px;
+  text-align: center;
+}
+
+.ws-title + .ws-instructions { 
+  margin-top: 2px;
+}
+
+.ws-instructions {
+  border-radius: 5px;
+  border: 4px solid #343434;
+  flex: 1 0 50%;
+  padding: 16px;
+
+  h2 {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  li {
+    font-size: 13px;
+    line-height: 18px;
+  }
+
+  h2 + ol {
+    margin-top: 16px;
+  }
+
+  li + li {
+    margin-top: 8px;
+  }
+}
+
+.ws-instructions + .ws-join { 
+  margin-top: 2px;
+}
+
+.ws-join {
+  font-size: 16px;
+  border-radius: 5px;
+  border: 4px solid #343434;
+  padding: 16px;
+
+  input {
+    background: transparent;
+    outline: none;
+    border: none;
+  }
+
+  p {
+    text-align: center;
+    font-size: 12px;
+  }
 }

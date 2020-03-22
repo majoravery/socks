@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "start": "webpack-dev-server --open --hot --mode development",
+    "start": "webpack-dev-server --open --mode development",
     "start:live": "serve -s build",
     "build": "npx webpack --config webpack.config.js",
     "clean": "rm -rf build && mkdir build",

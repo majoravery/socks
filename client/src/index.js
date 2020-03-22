@@ -6,6 +6,8 @@ import io from 'socket.io-client';
 import WelcomeScreen from './components/welcomeScreen';
 import GameScreen from './components/gameScreen';
 
+import './index.scss';
+
 const socket = io('http://localhost:8002', {
   forceNew: false,
 });
@@ -32,7 +34,7 @@ const PrivateRoute = ({ children, registered }) => {
 };
 
 const RootContainer = () => {
-  const [username, setUsername] = useState(null);
+  const [username, setUsername] = useState(true);
 
   useEffect(() => socket.disconnect, []);
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-import Players from '../players';
+import Players from './players';
+import ResultBoard from './resultBoard';
 import './gameScreen.scss';
 
 const GUESS_OPTIONS = [];
@@ -8,20 +9,30 @@ for(let i = 0; i <=9; i++) {
   GUESS_OPTIONS.push(i);
 }
 
-const GameScreen = ({ socket, username }) => {
-  console.log(username);
-  const [target, setTarget] = useState(null);
-  const [guessed, setGuessed] = useState(false);
+const GameScreen = ({ socket }) => {
+  const [target, setTarget] = useState(245);
+  const [guess, setGuessed] = useState(false);
+  const [result, setResult] = useState(null); // NOTE: change back to null
+  const [displayResultBoard, setDisplayResultBoard] = useState(false); // NOTE: change back to false
 
-  const onGuessSubmit = guess => {
-    console.log(guess);
-    socket.emit('guess', { guess });
-    setGuessed(true);
+  const onGuessSubmit = option => {
+    // socket.emit('guess', { guess: option });
+    setGuessed(option);
   };
 
   socket.on('new-game', ({ target: incomingTarget }) => {
     setTarget(incomingTarget);
-    setGuessed(false);
+  });
+
+  socket.on('game-result', ({ result: incomingResult }) => {
+    setDisplayResultBoard(true);
+    setResult(incomingResult);
+  });
+
+  socket.on('new-game-starting', () => {
+    setDisplayResultBoard(false);
+    setGuessed(null);
+    setResult(null);
   });
 
   const Game = () => {
@@ -31,9 +42,16 @@ const GameScreen = ({ socket, username }) => {
           <h2>Target:</h2>
           {target && <p className="game-target-number">{target}</p>}
         </div>
-        <div className={`game-options ${guessed ? 'guessed' : ''}`}>
+        <div className={`game-options ${guess ? 'guessed' : ''}`}>
           {GUESS_OPTIONS.map(option => (
-            <button key={option} id={option} className="game-option" onClick={() => onGuessSubmit(option)}>{option}</button>
+            <button
+              className={`game-option ${guess === option ? 'selected' : ''}`}
+              id={`option-${option}`}
+              key={option}
+              onClick={() => onGuessSubmit(option)}
+            >
+              {option}
+            </button>
           ))}
         </div>
       </div>
@@ -44,6 +62,7 @@ const GameScreen = ({ socket, username }) => {
     <div className="gs">
       <Players socket={socket} />
       <Game />
+      {displayResultBoard && <ResultBoard socket={socket} result={result} />}
     </div>
   );
 }

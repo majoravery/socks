@@ -43,8 +43,8 @@ const WelcomeScreen = ({ socket, setUsername }) => {
           <form onSubmit={onNameSubmit}>
             <label htmlFor="username">Name:</label>
             <input id="username" name="username" type="text" ref={usernameRef} autoFocus />
-            <button type="submit">Join</button>
           </form>
+          <p>Hit -enter- to join</p>
         </div>
       </div>
     </div>
