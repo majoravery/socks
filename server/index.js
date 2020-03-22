@@ -73,12 +73,14 @@ const tallyResults = () => {
     sum,
     won: false,
     corona: false,
-  }
+  };
+  let countdown = COUNTDOWN_NEW_GAME;
 
   if (sum === target) {
     result.won = true;
   } else if (sum === 19) {
     result.corona = true;
+    countdown += countdown; // Double countdown time for corona effect
   }
 
   broadcast('game-result', result);

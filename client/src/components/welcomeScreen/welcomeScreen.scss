@@ -21,24 +21,38 @@
   border-radius: 5px;
   border: 4px solid #343434;
   flex: 1 0 50%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
   padding: 16px;
 
   h2 {
+    align-self: flex-start;
+    flex: 1 0 100%;
     font-size: 16px;
     text-align: center;
   }
 
-  li {
-    font-size: 13px;
-    line-height: 18px;
+  ol {
+    align-self: flex-start;
+    flex: 1 0 100%;
   }
 
-  h2 + ol {
-    margin-top: 16px;
+  li {
+    font-size: 12px;
+    line-height: 16px;
   }
 
   li + li {
     margin-top: 8px;
+  }
+
+  p {
+    align-self: flex-end;
+    flex: 1 0 100%;
+    font-size: 12px;
+    line-height: 16px;
+    text-align: center;
   }
 }
 
@@ -52,14 +66,54 @@
   border: 4px solid #343434;
   padding: 16px;
 
+  form {
+    display: flex;
+  }
+
+  label + span {
+    margin-left: 8px;
+  }
+
   input {
     background: transparent;
-    outline: none;
+    border: 1px solid black;
     border: none;
+    caret-color: transparent;
+    font-size: 16px;
+    outline: none;
+    padding: 0;
+    position: relative;
+  }
+
+  span {
+    position: relative;
+
+    &::after {
+      content: '\25AC';
+      animation-duration: 1s;
+      animation-iteration-count: infinite;
+      animation-name: blink;
+      color: #343434;
+      font-size: 1.5em;
+      left: var(--left);
+      position: absolute;
+      top: 2px;
+      z-index: -1;
+    }
+  }
+
+  form + p {
+    margin-top: 16px;
   }
 
   p {
-    text-align: center;
     font-size: 12px;
+    text-align: center;
   }
+}
+
+@keyframes blink {
+	0% {opacity: 0}
+	49%{opacity: 0}
+	50% {opacity: 1}
 }

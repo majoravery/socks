@@ -10,10 +10,10 @@ for(let i = 0; i <=9; i++) {
 }
 
 const GameScreen = ({ socket }) => {
-  const [target, setTarget] = useState(245);
+  const [target, setTarget] = useState(null);
   const [guess, setGuessed] = useState(false);
-  const [result, setResult] = useState(null); // NOTE: change back to null
-  const [displayResultBoard, setDisplayResultBoard] = useState(false); // NOTE: change back to false
+  const [result, setResult] = useState(null);
+  const [displayResultBoard, setDisplayResultBoard] = useState(false);
 
   const onGuessSubmit = option => {
     // socket.emit('guess', { guess: option });
@@ -40,9 +40,12 @@ const GameScreen = ({ socket }) => {
       <div className="game">
         <div className="game-target">
           <h2>Target:</h2>
-          {target && <p className="game-target-number">{target}</p>}
+          {target
+            ? (<p className="game-target-number">{target}</p>)
+            : (<p className="game-waiting">Waiting for more players</p>)
+          }
         </div>
-        <div className={`game-options ${guess ? 'guessed' : ''}`}>
+        <div className={`game-options ${(target && !guess) ? 'ready' : ''}`}>
           {GUESS_OPTIONS.map(option => (
             <button
               className={`game-option ${guess === option ? 'selected' : ''}`}

@@ -10,6 +10,7 @@ $button-shadow: #4AA52E;
   display: flex;
   height: 100%;
   padding: 16px;
+  position: relative;
 }
 
 .players {
@@ -64,8 +65,19 @@ $button-shadow: #4AA52E;
 
   h2 {
     font-size: 16px;
+    line-height: 22px;
     text-align: center;
   }
+}
+
+.game-waiting {
+  animation-duration: 1s;
+  animation-iteration-count: infinite;
+  animation-name: blink;
+  font-size: 12px;
+  line-height: 16px;
+  margin: 32px 0;
+  text-align: center;
 }
 
 .game-target-number {
@@ -79,13 +91,14 @@ $button-shadow: #4AA52E;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  pointer-events: none;
   width: 100%;
 
-  &.guessed {
-    pointer-events: none;
+  &.ready {
+    pointer-events: auto;
 
     .game-option {
-      filter: brightness(0.4);
+      filter: none;
     }
   }
 }
@@ -96,6 +109,7 @@ $button-shadow: #4AA52E;
   color: white;
   display: inline-block;
   font-size: 20px;
+  filter: brightness(0.4);
   margin-top: 32px;
   outline: none;
   padding: 16px;
@@ -138,5 +152,47 @@ $button-shadow: #4AA52E;
     top: 0;
     border-left: $outline-width #343434 solid;
     border-right: $outline-width #343434 solid;
+  }
+}
+
+.rb {
+  align-items: flex-start;
+  background: #F7F7F7;
+  border-radius: 5px;
+  border: 4px solid #343434;
+  bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  height: 40%;
+  left: 0;
+  margin: auto;
+  padding: 16px;
+  position: fixed;
+  right: 0;
+  text-align: center;
+  top: 0;
+  width: 80%;
+
+  .rb-sum {
+    flex: 1 0 100%;
+  }
+
+  h3 {
+    align-self: center;
+    flex: 1 0 100%;
+    font-size: 42px;
+    line-height: 55px;
+
+    &.rb-corona {
+      font-size: 24px;
+      line-height: 32px;
+    }
+  }
+
+  .rb-new-game {
+    flex: 1 0 100%;
+    font-size: 12px;
+    align-self: flex-end;
   }
 }
