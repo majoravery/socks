@@ -44,10 +44,10 @@ const removeUserFromPlayers = id => {
   players = players.filter(player => player.id !== id);
 }
 
-const startCountdown = (length, callback) => {
+const startCountdown = (length, type, callback) => {
   let counter = length;
   const ticker = setInterval(() => {
-    broadcast('ticker', { tick: counter });
+    broadcast(type, { tick: counter });
     counter -= ONE_SECOND;
     console.log(`Counter: ${counter}`);
 
@@ -83,10 +83,10 @@ const tallyResults = () => {
     countdown += countdown; // Double countdown time for corona effect
   }
 
-  broadcast('game-result', result);
+  broadcast('game-result', { result });
   if (canNewGameStart()) {
     broadcast('new-game-starting');
-    startCountdown(COUNTDOWN_NEW_GAME, startGame);
+    startCountdown('ticker-new-game', startGame);
   } else {
     ongoingGame = false;
   }
@@ -106,7 +106,7 @@ const startGame = () => {
 
   console.log(`New target ${target}`);
   broadcast('new-game', { target });
-  startCountdown(COUNTDOWN_GUESS, tallyResults);
+  startCountdown('ticker-guess', tallyResults);
 }
 
 io.on('connection', (socket) => {

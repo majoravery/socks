@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 const ResultBoard = ({ socket, result }) => {
   const [tick, setTick] = useState(3);
 
-  const { corona, sum, won } = result;
+  const { sum, won, corona } = result;
 
-  socket.on('ticker', ({ tick: incomingTick }) => {
+  socket.on('ticker-new-game', ({ tick: incomingTick }) => {
     setTick(incomingTick);
   });
 

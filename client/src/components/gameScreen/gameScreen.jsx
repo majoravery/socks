@@ -10,29 +10,35 @@ for(let i = 0; i <=9; i++) {
 }
 
 const GameScreen = ({ socket }) => {
-  const [target, setTarget] = useState(null);
+  const [displayResultBoard, setDisplayResultBoard] = useState(false);
   const [guess, setGuessed] = useState(false);
   const [result, setResult] = useState(null);
-  const [displayResultBoard, setDisplayResultBoard] = useState(false);
+  const [target, setTarget] = useState(null);
+  const [tick, setTick] = useState(null);
 
   const onGuessSubmit = option => {
-    // socket.emit('guess', { guess: option });
+    socket.emit('guess', { guess: option });
     setGuessed(option);
   };
 
   socket.on('new-game', ({ target: incomingTarget }) => {
+    setDisplayResultBoard(false);
+    setGuessed(null);
+    setResult(null);
     setTarget(incomingTarget);
   });
 
   socket.on('game-result', ({ result: incomingResult }) => {
     setDisplayResultBoard(true);
     setResult(incomingResult);
+    setTick(null);
   });
 
   socket.on('new-game-starting', () => {
-    setDisplayResultBoard(false);
-    setGuessed(null);
-    setResult(null);
+  });
+
+  socket.on('ticker-guess', ({ tick: incomingTick }) => {
+    setTick(incomingTick);
   });
 
   const Game = () => {
@@ -45,6 +51,7 @@ const GameScreen = ({ socket }) => {
             : (<p className="game-waiting">Waiting for more players</p>)
           }
         </div>
+        {tick && <div className="game-countdown">{tick}</div>}
         <div className={`game-options ${(target && !guess) ? 'ready' : ''}`}>
           {GUESS_OPTIONS.map(option => (
             <button

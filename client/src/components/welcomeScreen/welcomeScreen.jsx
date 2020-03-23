@@ -1,20 +1,37 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import './welcomeScreen.scss';
 
+const MESSAGE_HIT_ENTER_TO_JOIN = 'Hit -enter- to join';
+const MESSAGE_INVALID_NAME = 'Invalid name';
+
 const WelcomeScreen = ({ socket, setUsername }) => {
   const usernameRef = useRef(null);
+  const [joinMessage, setJoinMessage] = useState(MESSAGE_HIT_ENTER_TO_JOIN);
   const history = useHistory();
 
   useEffect(() => {
     root.style.setProperty('--left', '0px');
   }, []);
 
+  useEffect(() => {
+    usernameRef.current.focus();
+  }, [usernameRef]);
+
   const onInputChange = () => {
+    setJoinMessage(MESSAGE_HIT_ENTER_TO_JOIN);
+    const input = usernameRef.current.value;
+    if (!input.match("^[A-Za-z0-9]+$")) {
+      usernameRef.current.value = input.substr(0, input.length - 1);
+    }
+
+    // Get length again
     const letters = usernameRef.current.value.length;
+    
     // Width of each letter is 16px, cursor should be beneath letter
-    root.style.setProperty('--left', `${letters * 16 - 16}px`);
+    const left = letters === 0 ? '0px' : `${letters * 16 - 16}px`;
+    root.style.setProperty('--left', left);
   }
 
   const onNameSubmit = e => {
@@ -22,11 +39,9 @@ const WelcomeScreen = ({ socket, setUsername }) => {
     const username = usernameRef.current.value;
 
     if (!username || !username.length) {
-      // TODO: handle bad username;
+      setJoinMessage(MESSAGE_INVALID_NAME);
       return;
     }
-
-    // TODO: validate username - no spaces, no weird characters
 
     socket.emit('register', { username });
     setUsername(username);
@@ -39,7 +54,7 @@ const WelcomeScreen = ({ socket, setUsername }) => {
         COVID-19 Game
       </h1>
       <div className="ws-instructions">
-        <h2>Instructions:</h2>
+        <h2>How to play:</h2>
         <ol>
           <li>The goal of the game is to match the input sum of all participants to the target number displayed.</li>
           <li>Minimum number of players: 3</li>
@@ -54,7 +69,7 @@ const WelcomeScreen = ({ socket, setUsername }) => {
         <div className="ws-name-field">
           <form onSubmit={onNameSubmit}>
             <label htmlFor="username">Name:</label>
-            <span>
+            <span className="ws-input-wrap">
               <input
                 id="username"
                 name="username"
@@ -62,12 +77,12 @@ const WelcomeScreen = ({ socket, setUsername }) => {
                 ref={usernameRef}
                 onChange={onInputChange}
                 autoComplete="off"
-                autoFocus
                 maxLength={15}
               />
+              <span className="ws-cursor"></span>
             </span>
           </form>
-          <p>Hit -enter- to join</p>
+          <p>{joinMessage}</p>
         </div>
       </div>
     </div>

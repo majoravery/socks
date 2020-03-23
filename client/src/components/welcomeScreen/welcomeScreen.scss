@@ -70,8 +70,13 @@
     display: flex;
   }
 
-  label + span {
+  label + .ws-input-wrap {
     margin-left: 8px;
+  }
+
+  .ws-input-wrap {
+    display: block;
+    position: relative;
   }
 
   input {
@@ -85,8 +90,12 @@
     position: relative;
   }
 
-  span {
-    position: relative;
+  .ws-cursor {
+    display: block;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
 
     &::after {
       content: '\25AC';
@@ -100,6 +109,10 @@
       top: 2px;
       z-index: -1;
     }
+  }
+
+  input:not(:focus) + .ws-cursor {
+    display: none;
   }
 
   form + p {
