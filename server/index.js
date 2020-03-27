@@ -12,6 +12,7 @@ let ongoingGame = false;
 let players = [];
 let sum = 0;
 let target;
+let ticker;
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -46,7 +47,7 @@ const removeUserFromPlayers = id => {
 
 const startCountdown = (length, type, callback) => {
   let counter = length;
-  const ticker = setInterval(() => {
+  ticker = setInterval(() => {
     broadcast(type, { tick: counter });
     counter -= ONE_SECOND;
     console.log(`Counter: ${counter}`);
@@ -109,6 +110,14 @@ const startGame = () => {
   startCountdown('ticker-guess', tallyResults);
 }
 
+const stopGame = () => {
+  clearInterval(ticker);
+}
+
+const isTargetStillValid = () => {
+  return players.length * 9 >= target;
+}
+
 io.on('connection', (socket) => {
   socket.join(GAME_ROOM_ID, () => {
     let rooms = Object.keys(socket.rooms);
@@ -120,7 +129,7 @@ io.on('connection', (socket) => {
     console.log(`Registered as ${username}`);
     updatePlayer(socket.id, { username });
     broadcast('new-player', { players });
-    if (players.length >= 3 && canNewGameStart()) {
+    if (canNewGameStart()) {
       startGame();
     }
   });
@@ -136,14 +145,22 @@ io.on('connection', (socket) => {
     sum += parseInt(guess, 10);
   });
 
-  socket.on('leave', () => {
-    socket.disconnect(true);
-  });
-
   socket.on('disconnect', () => {
     removeUserFromPlayers(socket.id);
     console.log(`Disconnected ${socket.id}`);
     console.log(`${players.length} players: ${players.map(player => player.id).join(' ')}`)
+    const valid = isTargetStillValid();
+    if (!valid) {
+      ongoingGame = false;
+      startCountdown('invalid-game', startGame);
+      stopGame();
+
+      if (canNewGameStart()) {
+        startCountdown('ticker-new-game', startGame);
+      } else {
+        
+      }
+    }
   });
 });
 

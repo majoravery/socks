@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 
 import Players from './players';
-import ResultBoard from './resultBoard';
+import InfoBoard from './infoBoard';
 import './gameScreen.scss';
 
 const GUESS_OPTIONS = [];
@@ -10,8 +10,10 @@ for(let i = 0; i <=9; i++) {
 }
 
 const GameScreen = ({ socket }) => {
-  const [displayResultBoard, setDisplayResultBoard] = useState(false);
+  const [displayInfoBoard, setDisplayInfoBoard] = useState(false);
   const [guess, setGuessed] = useState(false);
+  const [invalidGame, setInvalidGame] = useState(false);
+  const [newGameStarting, setNewGameStarting] = useState(false);
   const [result, setResult] = useState(null);
   const [target, setTarget] = useState(null);
   const [tick, setTick] = useState(null);
@@ -21,20 +23,29 @@ const GameScreen = ({ socket }) => {
     setGuessed(option);
   };
 
+  socket.on('game-result', ({ result: incomingResult }) => {
+    setResult(incomingResult);
+    setDisplayInfoBoard(true);
+    setTick(null);
+  });
+
+  socket.on('invalid-game', () => {
+    setInvalidGame(true);
+    setDisplayInfoBoard(true);
+    setTick(null);
+  });
+
   socket.on('new-game', ({ target: incomingTarget }) => {
-    setDisplayResultBoard(false);
+    setDisplayInfoBoard(false);
     setGuessed(null);
+    setInvalidGame(false);
+    setNewGameStarting(false); // New game has started, value should be false
     setResult(null);
     setTarget(incomingTarget);
   });
 
-  socket.on('game-result', ({ result: incomingResult }) => {
-    setDisplayResultBoard(true);
-    setResult(incomingResult);
-    setTick(null);
-  });
-
   socket.on('new-game-starting', () => {
+    setNewGameStarting(true);
   });
 
   socket.on('ticker-guess', ({ tick: incomingTick }) => {
@@ -68,11 +79,44 @@ const GameScreen = ({ socket }) => {
     );
   };
 
+  let infoBoardContent;
+
+  if (newGameStarting) {
+    infoBoardContent = (
+      <p className="ib-new-game">Get ready!</p>
+    );
+  }
+
+  if (result) {
+    const { sum, won, corona } = result;
+    infoBoardContent = (
+      <Fragment>
+        <p className="ib-sum">Sum: {sum}</p>
+        {corona
+          ? (<h3 className="ib-corona">Everyone gets corona<br />!!!!!!</h3>)
+          : (<h3>You {won ? 'won' : 'lost'}</h3>)
+        }
+      </Fragment>
+    );
+  }
+
+  if (invalidGame) {
+    infoBoardContent = (
+      <p className="ib-invalid-game">
+        Insufficient current number of players to reach target.
+      </p>
+    );
+  }
+
   return (
     <div className="gs">
       <Players socket={socket} />
       <Game />
-      {displayResultBoard && <ResultBoard socket={socket} result={result} />}
+      {displayInfoBoard && (
+        <InfoBoard socket={socket}>
+          {infoBoardContent}
+        </InfoBoard>
+      )}
     </div>
   );
 }

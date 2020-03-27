@@ -163,7 +163,7 @@ $button-shadow: #4AA52E;
   }
 }
 
-.rb {
+.ib {
   align-items: flex-start;
   background: #F7F7F7;
   border-radius: 5px;
@@ -182,8 +182,15 @@ $button-shadow: #4AA52E;
   top: 0;
   width: 80%;
 
-  .rb-sum {
+  .ib-sum {
     flex: 1 0 100%;
+  }
+
+  .ib-new-game,
+  .ib-invalid-game {
+    align-self: center;
+    font-size: 16px;
+    line-height: 22px;
   }
 
   h3 {
@@ -192,13 +199,13 @@ $button-shadow: #4AA52E;
     font-size: 42px;
     line-height: 55px;
 
-    &.rb-corona {
+    &.ib-corona {
       font-size: 24px;
       line-height: 32px;
     }
   }
 
-  .rb-new-game {
+  .ib-new-game {
     flex: 1 0 100%;
     font-size: 12px;
     align-self: flex-end;
