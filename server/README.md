@@ -9,8 +9,6 @@ These are the different types of messages and their accompanying data object (if
 
 ### `game-result`
 
-#### **Description:**
-
 Sends game results including sum of guesses and win status
 
 #### **Data object:**
@@ -24,23 +22,17 @@ Sends game results including sum of guesses and win status
 
 ### `invalid-game`
 
-#### **Description:**
-
 Broadcasts to room that there are now insufficient players to reach the target
 
 #### **Data object:** `null`
 
 ### `new-game-starting`
 
-#### **Description:**
-
 New game starting alert for client to prepare
 
 #### **Data object:** `null`
 
 ### `new-game`
-
-#### **Description:**
 
 New game with new target number
 
@@ -52,8 +44,6 @@ New game with new target number
 
 ### `new-player`
 
-#### **Description:**
-
 New player to update `<Players />` column
 
 #### **Data object:**
@@ -63,8 +53,6 @@ New player to update `<Players />` column
 | `players` | array | Array of player objects (ie socket id, name) |
 
 ### `player-guessed`
-
-#### **Description:**
 
 Sends `players` array to update column and indicate which players have already guessed
 
@@ -76,8 +64,6 @@ Sends `players` array to update column and indicate which players have already g
 
 ### `ticker-guess`
 
-#### **Description:**
-
 Ticker for guess
 
 #### **Data object:**
@@ -87,8 +73,6 @@ Ticker for guess
 | `tick` | integer | Ticker counter in milliseconds |
 
 ### `ticker-new-game`
-
-#### **Description:**
 
 Ticker for new game
 
