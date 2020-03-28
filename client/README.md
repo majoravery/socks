@@ -1,6 +1,7 @@
 # Socks client
 
 React n WebSockets mainly
+Runs on port **3013**
 
 ## Messages sent
 

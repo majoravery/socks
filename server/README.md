@@ -1,6 +1,7 @@
 # Socks server
 
 WebSockets n stuff, also handles game and countdown logic
+Runs on port **8002**
 
 ## Messages sent
 
