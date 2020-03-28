@@ -9,7 +9,9 @@ These are the different types of messages and their accompanying data object (if
 
 ### `game-result`
 
-#### **Description:** Sends game results including sum of guesses and win status
+#### **Description:**
+
+Sends game results including sum of guesses and win status
 
 #### **Data object:**
 
@@ -22,19 +24,25 @@ These are the different types of messages and their accompanying data object (if
 
 ### `invalid-game`
 
-#### **Description:** Broadcasts to room that there are now insufficient players to reach the target
+#### **Description:**
+
+Broadcasts to room that there are now insufficient players to reach the target
 
 #### **Data object:** `null`
 
 ### `new-game-starting`
 
-#### **Description:** New game starting alert for client to prepare
+#### **Description:**
+
+New game starting alert for client to prepare
 
 #### **Data object:** `null`
 
 ### `new-game`
 
-#### **Description:** New game with new target number
+#### **Description:**
+
+New game with new target number
 
 #### **Data object:**
 
@@ -44,7 +52,9 @@ These are the different types of messages and their accompanying data object (if
 
 ### `new-player`
 
-#### **Description:** New player to update `<Players />` column
+#### **Description:**
+
+New player to update `<Players />` column
 
 #### **Data object:**
 
@@ -54,7 +64,9 @@ These are the different types of messages and their accompanying data object (if
 
 ### `player-guessed`
 
-#### **Description:** Sends `players` array to update column and indicate which players have already guessed
+#### **Description:**
+
+Sends `players` array to update column and indicate which players have already guessed
 
 #### **Data object:**
 
@@ -64,7 +76,9 @@ These are the different types of messages and their accompanying data object (if
 
 ### `ticker-guess`
 
-#### **Description:** Ticker for guess
+#### **Description:**
+
+Ticker for guess
 
 #### **Data object:**
 
@@ -74,7 +88,9 @@ These are the different types of messages and their accompanying data object (if
 
 ### `ticker-new-game`
 
-#### **Description:** Ticker for new game
+#### **Description:**
+
+Ticker for new game
 
 #### **Data object:**
 
