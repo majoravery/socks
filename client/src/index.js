@@ -34,7 +34,7 @@ const PrivateRoute = ({ children, registered }) => {
 };
 
 const RootContainer = () => {
-  const [username, setUsername] = useState(false); // NOTE: set to false
+  const [username, setUsername] = useState(true); // NOTE: set to false
 
   useEffect(() => socket.disconnect, []);
 

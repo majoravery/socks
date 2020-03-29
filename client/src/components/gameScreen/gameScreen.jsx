@@ -88,6 +88,7 @@ const GameScreen = ({ socket }) => {
 
   let infoBoardContent;
   let bgEffect;
+  let bgEffectContent;
 
   if (newGameStarting) {
     infoBoardContent = (
@@ -112,7 +113,7 @@ const GameScreen = ({ socket }) => {
       </Fragment>
     );
   } else {
-    bgEffect = '';
+    bgEffect = null;
   }
 
   if (invalidGame) {
@@ -123,10 +124,31 @@ const GameScreen = ({ socket }) => {
     );
   }
 
+  switch (bgEffect) {
+    case 'corona':
+      bgEffectContent = null;
+      break;
+    case 'won':
+      bgEffectContent = null;
+      break;
+    case 'lost':
+      bgEffectContent = (
+        <>
+          {new Array(16).forEach(a => (<div className="ib-bg-rain"></div>))}
+        </>
+      );
+      break;
+    default: 
+      bgEffectContent = null;
+      break;
+  }
+
   return (
-    <div className={`gs ${bgEffect}`}>
+    <div className="gs">
       <Players socket={socket} />
       <Game />
+      {bgEffectContent} {/* // TODO: delete this */}
+      {/* {bgEffect && bgEffectContent} */}
       {displayInfoBoard && (
         <InfoBoard socket={socket}>
           {infoBoardContent}

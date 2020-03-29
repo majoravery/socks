@@ -219,3 +219,31 @@ $button-shadow: #4AA52E;
     }
   }
 }
+
+.ib-bg-rain {
+  $drops: 16;
+  $width: 6px;
+  $height: 30px;
+
+  width: $width;
+	height: $height;
+	background-color: royalblue;
+	position: absolute;
+	animation-name: rain;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+  top: -$height;
+  
+  @keyframes rain {
+    0% { transform: translateY(0vh); }
+    100% { transform: translateY(100vh); }
+  }
+
+  $offset: 100% / $drops;
+  @for $i from 1 through $drops {
+    &:nth-child(#{$i}) {
+      left: $offset * $i;
+      animation-duration: 1000ms + (random(2500) * 1ms);
+    }
+  }
+}
