@@ -5,11 +5,12 @@ const SocketServer = require('socket.io');
 const COUNTDOWN_NEW_GAME = 5000;
 const COUNTDOWN_GUESS = 8000;
 const GAME_ROOM_ID = 'game-room';
-const MAXIMUM_PLAYERS = 30;
+const MAXIMUM_PLAYERS = 4;
 const ONE_SECOND = 1000;
 const PORT = process.env.PORT;
+const SOCKET_DELAY = ONE_SECOND;
 
-let hasMaximumPlayers = false;
+let playersCapReached = false;
 let ongoingGame = false;
 let players = [];
 let sum = 0;
@@ -40,35 +41,43 @@ const updatePlayer = (id, updateObj) => {
   players = [
     ...players.filter(player => player.id !== id),
     playerUpdated,
-  ]; 
+  ];
+  console.log({ players });
 }
 
 const removeUserFromPlayers = id => {
   players = players.filter(player => player.id !== id);
 }
 
-// TODO:
-const getNextWaitingPlayer = () => {
-  return null;
+const getNextWaitingPlayerId = () => {
+  const index = players.findIndex(p => !p.playing);
+  return players[index].id;
 }
 
 const startCountdown = (length, type, callback) => {
   let counter = length;
   ticker = setInterval(() => {
-    broadcast(type, { tick: counter });
+    const tick = parseInt(counter / ONE_SECOND, 10);
+    broadcast(type, { tick });
     counter -= ONE_SECOND;
     console.log(`Counter: ${counter}`);
 
-    if (counter <= 0) {
+    if (counter <= 0 - SOCKET_DELAY) {
       clearInterval(ticker);
-      callback();
+      if (callback) {
+        callback();
+      }
     };
   }, ONE_SECOND);
 }
 
 const resetGame = () => {
   sum = 0;
-  players = players.map(player => player.guess = false);
+  players = players.map(player => {
+    player.guessed = false
+    return player;
+  });
+  console.log(players);
 }
 
 const canNewGameStart = () => {
@@ -77,6 +86,7 @@ const canNewGameStart = () => {
 }
 
 const tallyResults = () => {
+  ongoingGame = false;
   const result = {
     sum,
     won: false,
@@ -93,26 +103,25 @@ const tallyResults = () => {
 
   broadcast('game-result', { result });
   if (canNewGameStart()) {
-    broadcast('new-game-starting');
+    broadcast('new-game-starting', { players });
     startCountdown(countdown, 'ticker-new-game', startGame);
-  } else {
-    ongoingGame = false;
   }
 }
 
 const startGame = () => {
   resetGame();
-  broadcast('new-game-starting');
+  broadcast('new-game-starting', { players });
+  ongoingGame = true;
 
+  const validPlayers = players.filter(player => player.username);
   const min = 1; // Setting 0 as minimum would be too easy
-  const max = players.length * 9 - 1; // Same goes for the maximum possible value
+  const max = validPlayers.length * 9 - 1; // Same goes for the maximum possible value
   let generated;
   while (!generated || generated === 19) {
     generated = Math.floor(Math.random() * (max - min + 1) + min);
   }
   target = generated;
 
-  console.log(`New target ${target}`);
   broadcast('new-game', { target });
   startCountdown(COUNTDOWN_GUESS, 'ticker-guess', tallyResults);
 }
@@ -121,23 +130,23 @@ const stopGame = () => {
   clearInterval(ticker);
 }
 
-const isTargetStillValid = () => {
+const isTargetStillAchievable = () => {
   return players.length * 9 >= target;
 }
 
 io.on('connection', (socket) => {
   socket.join(GAME_ROOM_ID, () => {
-    players.push({ id: socket.id, inGame: true });
-    console.log(`${players.length} players: ${players.map(player => player.id).join(' ')}`)
   });
 
   socket.on('register', ({ username }) => {
+    players.push({ id: socket.id, playing: true });
+
     if (players.length > MAXIMUM_PLAYERS) {
-      hasMaximumPlayers = true;
-      updatePlayer(socket.id, { inGame: false });
+      playersCapReached = true;
+      updatePlayer(socket.id, { playing: false });
     }
 
-    console.log(`Registered as ${username}`);
+    console.log(`\nRegistered as ${username}`);
     updatePlayer(socket.id, { username });
     broadcast('new-player', { players });
 
@@ -151,7 +160,7 @@ io.on('connection', (socket) => {
     updatePlayer(socket.id, { guessed: true });
 
     // Send player guessed data to everyone
-    broadcast('player-guessed', players);
+    broadcast('player-guessed', { players });
 
     console.log(`Sum = ${sum} + ${guess}`);
     sum += parseInt(guess, 10);
@@ -159,25 +168,30 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     removeUserFromPlayers(socket.id);
-    console.log(`Disconnected ${socket.id}`);
-    console.log(`${players.length} players: ${players.map(player => player.id).join(' ')}`);
-    const valid = isTargetStillValid();
-    if (!valid) { // 2 players or less
+    console.log(`\nDisconnected ${socket.id}`);
+
+    // Get next waiting player, if any
+    if (playersCapReached) {
+      const id = getNextWaitingPlayerId();
+      console.log({ id });
+      updatePlayer(id, { playing: true });
+      playersCapReached = players.length > MAXIMUM_PLAYERS;
+    }
+    
+    const achievable = isTargetStillAchievable();
+    if (!achievable) {
+      // Current target is higher than players.length * 9
       ongoingGame = false;
-      startCountdown(COUNTDOWN_NEW_GAME, 'invalid-game', startGame);
-      stopGame();
 
       if (canNewGameStart()) {
-        startCountdown(COUNTDOWN_NEW_GAME, 'ticker-new-game', startGame);
+        // Still enough players to start new round
+        startCountdown(COUNTDOWN_NEW_GAME, 'invalid-game', startGame);
       } else {
-        
+        // Only 2 or less players left
+        stopGame();
       }
     } else {
-      if (!players.length > MAXIMUM_PLAYERS) {
-        hasMaximumPlayers = false;
-        const id = getNextWaitingPlayer();
-        updatePlayer(id, { inGame: true });
-      }
+      // Current target still achievable, let game proceed as usual
     }
   });
 });

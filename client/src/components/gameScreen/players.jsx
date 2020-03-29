@@ -3,14 +3,19 @@ import React, { useState } from 'react';
 const Players = ({ socket }) => {
   const [players, setPlayers] = useState([]);
 
-  socket.on('new-player', ({ players: connectedPlayers }) => {
-    const validPlayers = connectedPlayers.filter(player => player.username);
-    setPlayers(validPlayers);
+  const getValidPlayers = ps => ps.filter(p => p.username);
+
+  socket.on('new-player', ({ players: ps }) => {
+    setPlayers(getValidPlayers(ps));
   });
 
-  socket.on('player-guessed', ({ players: connectedPlayers }) => {
-    setPlayers(connectedPlayers);
+  socket.on('player-guessed', ({ players: ps }) => {
+    setPlayers(getValidPlayers(ps));
   });
+
+  socket.on('new-game-starting', ({ players: ps }) => {
+    setPlayers(getValidPlayers(ps));
+  })
 
   return (
     <div className="players">

@@ -32,6 +32,10 @@ New game starting alert for client to prepare
 
 #### **Data object:** `null`
 
+| Key | Type | Description|
+|---|---|---|
+| `players` | array | Array of player objects (ie socket id, name, guessed, playing) |
+
 ### `new-game`
 
 New game with new target number
@@ -50,7 +54,7 @@ New player to update `<Players />` column
 
 | Key | Type | Description|
 |---|---|---|
-| `players` | array | Array of player objects (ie socket id, name) |
+| `players` | array | Array of player objects (ie socket id, name, guessed, playing) |
 
 ### `player-guessed`
 
@@ -60,7 +64,7 @@ Sends `players` array to update column and indicate which players have already g
 
 | Key | Type | Description|
 |---|---|---|
-| `players` | array | Array of player objects (ie socket id, name, guessed) |
+| `players` | array | Array of player objects (ie socket id, name, guessed, playing) |
 
 ### `ticker-guess`
 

@@ -38,7 +38,11 @@ $button-shadow: #4AA52E;
   }
 
   li.guessed {
-    color: #555;
+    text-decoration: line-through;
+  }
+
+  li.not-playing {
+    color: #888;
   }
 
   h2 + ul {
@@ -209,5 +213,9 @@ $button-shadow: #4AA52E;
     flex: 1 0 100%;
     font-size: 12px;
     align-self: flex-end;
+
+    &.hidden {
+      display: none;
+    }
   }
 }

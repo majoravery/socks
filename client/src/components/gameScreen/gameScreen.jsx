@@ -49,6 +49,13 @@ const GameScreen = ({ socket }) => {
   });
 
   socket.on('ticker-guess', ({ tick: incomingTick }) => {
+    // Avoid displaying 0 or less as counter as the new-game 
+    // event will be broadcasted shortly after 0 on the server
+    // side, causing a brief flash of the 0 tick
+    if (incomingTick < 1) {
+      return;
+    }
+
     setTick(incomingTick);
   });
 
@@ -80,6 +87,7 @@ const GameScreen = ({ socket }) => {
   };
 
   let infoBoardContent;
+  let bgEffect;
 
   if (newGameStarting) {
     infoBoardContent = (
@@ -89,15 +97,22 @@ const GameScreen = ({ socket }) => {
 
   if (result) {
     const { sum, won, corona } = result;
+    
+    if (corona) {
+      bgEffect = 'corona';
+    } else {
+      bgEffect = won ? 'won' : 'lost';
+    }
+
     infoBoardContent = (
       <Fragment>
         <p className="ib-sum">Sum: {sum}</p>
-        {corona
-          ? (<h3 className="ib-corona">Everyone gets corona<br />!!!!!!</h3>)
-          : (<h3>You {won ? 'won' : 'lost'}</h3>)
-        }
+        {corona && <h3 className="ib-corona">Everyone gets corona<br />!!!!!!</h3>}
+        {won ? <h3 className="ib-won">You won</h3> : <h3 className="ib-lost">You lost</h3>}
       </Fragment>
     );
+  } else {
+    bgEffect = '';
   }
 
   if (invalidGame) {
@@ -109,7 +124,7 @@ const GameScreen = ({ socket }) => {
   }
 
   return (
-    <div className="gs">
+    <div className={`gs ${bgEffect}`}>
       <Players socket={socket} />
       <Game />
       {displayInfoBoard && (
