@@ -11,6 +11,27 @@ $button-shadow: #4AA52E;
   height: 100%;
   padding: 16px;
   position: relative;
+
+  &.corona { 
+    animation: squiggle 300ms infinite;
+
+    &:after {
+      content: '';
+      animation: fade 4000ms infinite ease-in-out;
+      background-color: red;
+      height: 100%;
+      left: 0;
+      mix-blend-mode: color;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 1;
+    }
+
+    h2, li, p {
+      color: rgb(51, 51, 51);
+    }
+  }
 }
 
 .players {
@@ -185,6 +206,11 @@ $button-shadow: #4AA52E;
   text-align: center;
   top: 0;
   width: 80%;
+  z-index: 5;
+
+  .gs.corona + & {
+    animation: squiggle 500ms infinite;
+  }
 
   .ib-sum {
     flex: 1 0 100%;
@@ -220,10 +246,44 @@ $button-shadow: #4AA52E;
   }
 }
 
+.ib-bg-dizzy {
+  $dizzies: 16;
+  $offset: 100% / $dizzies;
+
+  border-radius: 50%;
+  position: absolute;
+  animation: fade infinite ease-in-out;
+
+  &.full {
+    background: rgb(51, 51, 51);
+  }
+
+  &.stroke {
+    border: 6px solid rgb(51, 51, 51);
+  }
+
+  @for $i from 1 through $dizzies {
+    &:nth-child(#{$i}) {
+      $diameter: 10px + random(30);
+
+      height: $diameter;
+      left: $offset * $i;
+      top: $offset * $i;
+      width: $diameter;
+      animation-duration: 300ms + random(300);
+    }
+  }
+}
+
+.ib-bg-squiggles {
+  display: none;
+}
+
 .ib-bg-rain {
   $drops: 16;
-  $width: 6px;
   $height: 30px;
+  $offset: 100% / $drops;
+  $width: 6px;
 
   width: $width;
 	height: $height;
@@ -233,17 +293,30 @@ $button-shadow: #4AA52E;
 	animation-iteration-count: infinite;
 	animation-timing-function: linear;
   top: -$height;
-  
-  @keyframes rain {
-    0% { transform: translateY(0vh); }
-    100% { transform: translateY(100vh); }
-  }
 
-  $offset: 100% / $drops;
   @for $i from 1 through $drops {
     &:nth-child(#{$i}) {
       left: $offset * $i;
       animation-duration: 1000ms + (random(2500) * 1ms);
     }
   }
+}
+
+@keyframes rain {
+  0% { transform: translateY(0vh); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes squiggle {
+  0% { filter: url('#squiggle-0'); }
+  25% { filter: url('#squiggle-1'); }
+  50% { filter: url('#squiggle-2'); }
+  75% { filter: url('#squiggle-3'); }
+  100% { filter: url('#squiggle-4'); }
+}
+
+@keyframes fade {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
 }

@@ -10,7 +10,7 @@ for(let i = 0; i <=9; i++) {
 }
 
 const GameScreen = ({ socket }) => {
-  const [displayInfoBoard, setDisplayInfoBoard] = useState(false);
+  const [displayInfoBoard, setDisplayInfoBoard] = useState(true);
   const [guess, setGuessed] = useState(false);
   const [invalidGame, setInvalidGame] = useState(false);
   const [newGameStarting, setNewGameStarting] = useState(false);
@@ -124,9 +124,45 @@ const GameScreen = ({ socket }) => {
     );
   }
 
+  bgEffect = 'corona';
+
   switch (bgEffect) {
     case 'corona':
-      bgEffectContent = null;
+      bgEffectContent = (
+        <div className="ib-bg-corona">
+          {new Array(16).fill(null).map(a => {
+            const type = Math.random() >= 0.5 ? 'full' : 'stroke';
+            return <div className={`ib-bg-dizzy ${type}`}></div>;
+          })}
+          <div className="ib-bg-squiggles">
+            {`<!-- Credit: https://codepen.io/davidkpiano/pen/wMqXea -->`}
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
+              <defs>
+                <filter id="squiggle-0">
+                  <feTurbulence id="turbulence" baseFrequency="0.02" numOctaves="3" result="noise" seed="0"/>
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" id="displacement" />
+                </filter>
+                <filter id="squiggle-1">
+                  <feTurbulence id="turbulence" baseFrequency="0.02" numOctaves="3" result="noise" seed="1"/>
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+                </filter>
+                <filter id="squiggle-2">
+                  <feTurbulence id="turbulence" baseFrequency="0.02" numOctaves="3" result="noise" seed="2"/>
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" />
+                </filter>
+                <filter id="squiggle-3">
+                  <feTurbulence id="turbulence" baseFrequency="0.02" numOctaves="3" result="noise" seed="3"/>
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" />
+                </filter>
+                <filter id="squiggle-4">
+                  <feTurbulence id="turbulence" baseFrequency="0.02" numOctaves="3" result="noise" seed="4"/>
+                  <feDisplacementMap in="SourceGraphic" in2="noise" scale="1" />
+                </filter>
+              </defs> 
+            </svg>
+          </div>
+        </div>
+      );
       break;
     case 'won':
       bgEffectContent = null;
@@ -134,7 +170,7 @@ const GameScreen = ({ socket }) => {
     case 'lost':
       bgEffectContent = (
         <>
-          {new Array(16).forEach(a => (<div className="ib-bg-rain"></div>))}
+          {new Array(16).fill(null).map((a, i) => (<div key={i} className="ib-bg-rain" />))}
         </>
       );
       break;
@@ -144,17 +180,19 @@ const GameScreen = ({ socket }) => {
   }
 
   return (
-    <div className="gs">
-      <Players socket={socket} />
-      <Game />
-      {bgEffectContent} {/* // TODO: delete this */}
-      {/* {bgEffect && bgEffectContent} */}
+    <>
+      <div className={`gs ${bgEffect ? bgEffect : ''}`}>
+        <Players socket={socket} />
+        <Game />
+        {bgEffectContent} {/* // TODO: delete this */}
+        {/* {bgEffect && bgEffectContent} */}
+      </div>
       {displayInfoBoard && (
         <InfoBoard socket={socket}>
           {infoBoardContent}
         </InfoBoard>
       )}
-    </div>
+    </>
   );
 }
 
