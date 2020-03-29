@@ -1,7 +1,7 @@
 ARG ALPINE_VERSION=3.10
 
 # Server
-FROM node:10.16.3-alpine as server
+FROM node:10.19-alpine as server
 
 WORKDIR /usr/app/server
 
@@ -11,7 +11,7 @@ RUN yarn install
 COPY ./server .
 
 # Client
-FROM node:10.16.3-alpine as client
+FROM node:10.19-alpine as client
 
 WORKDIR /usr/app/client
 

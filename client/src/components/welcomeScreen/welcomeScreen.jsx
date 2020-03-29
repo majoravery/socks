@@ -58,6 +58,7 @@ const WelcomeScreen = ({ socket, setUsername }) => {
         <ol>
           <li>The goal of the game is to match the input sum of all participants to the target number displayed.</li>
           <li>Minimum number of players: 3</li>
+          <li>Maximum number of players: 30</li>
           <li>When a new game starts, enter your guess before the countdown ends.</li>
           <li>Valid input numbers are between 0 and 9, inclusive.</li>
           <li>If the sum of input from all players match the target number, everyone wins. Otherwise, everyone loses.</li>

@@ -5,9 +5,11 @@ const SocketServer = require('socket.io');
 const COUNTDOWN_NEW_GAME = 5000;
 const COUNTDOWN_GUESS = 8000;
 const GAME_ROOM_ID = 'game-room';
+const MAXIMUM_PLAYERS = 30;
 const ONE_SECOND = 1000;
 const PORT = process.env.PORT;
 
+let hasMaximumPlayers = false;
 let ongoingGame = false;
 let players = [];
 let sum = 0;
@@ -43,6 +45,11 @@ const updatePlayer = (id, updateObj) => {
 
 const removeUserFromPlayers = id => {
   players = players.filter(player => player.id !== id);
+}
+
+// TODO:
+const getNextWaitingPlayer = () => {
+  return null;
 }
 
 const startCountdown = (length, type, callback) => {
@@ -87,7 +94,7 @@ const tallyResults = () => {
   broadcast('game-result', { result });
   if (canNewGameStart()) {
     broadcast('new-game-starting');
-    startCountdown('ticker-new-game', startGame);
+    startCountdown(countdown, 'ticker-new-game', startGame);
   } else {
     ongoingGame = false;
   }
@@ -107,7 +114,7 @@ const startGame = () => {
 
   console.log(`New target ${target}`);
   broadcast('new-game', { target });
-  startCountdown('ticker-guess', tallyResults);
+  startCountdown(COUNTDOWN_GUESS, 'ticker-guess', tallyResults);
 }
 
 const stopGame = () => {
@@ -120,15 +127,20 @@ const isTargetStillValid = () => {
 
 io.on('connection', (socket) => {
   socket.join(GAME_ROOM_ID, () => {
-    let rooms = Object.keys(socket.rooms);
-    players.push({ id: socket.id });
+    players.push({ id: socket.id, inGame: true });
     console.log(`${players.length} players: ${players.map(player => player.id).join(' ')}`)
   });
 
   socket.on('register', ({ username }) => {
+    if (players.length > MAXIMUM_PLAYERS) {
+      hasMaximumPlayers = true;
+      updatePlayer(socket.id, { inGame: false });
+    }
+
     console.log(`Registered as ${username}`);
     updatePlayer(socket.id, { username });
     broadcast('new-player', { players });
+
     if (canNewGameStart()) {
       startGame();
     }
@@ -148,17 +160,23 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     removeUserFromPlayers(socket.id);
     console.log(`Disconnected ${socket.id}`);
-    console.log(`${players.length} players: ${players.map(player => player.id).join(' ')}`)
+    console.log(`${players.length} players: ${players.map(player => player.id).join(' ')}`);
     const valid = isTargetStillValid();
-    if (!valid) {
+    if (!valid) { // 2 players or less
       ongoingGame = false;
-      startCountdown('invalid-game', startGame);
+      startCountdown(COUNTDOWN_NEW_GAME, 'invalid-game', startGame);
       stopGame();
 
       if (canNewGameStart()) {
-        startCountdown('ticker-new-game', startGame);
+        startCountdown(COUNTDOWN_NEW_GAME, 'ticker-new-game', startGame);
       } else {
         
+      }
+    } else {
+      if (!players.length > MAXIMUM_PLAYERS) {
+        hasMaximumPlayers = false;
+        const id = getNextWaitingPlayer();
+        updatePlayer(id, { inGame: true });
       }
     }
   });
