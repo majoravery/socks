@@ -11,7 +11,7 @@ for(let i = 0; i <=9; i++) {
 }
 
 const GameScreen = ({ socket }) => {
-  const [displayInfoBoard, setDisplayInfoBoard] = useState(true);
+  const [displayInfoBoard, setDisplayInfoBoard] = useState(false);
   const [guess, setGuessed] = useState(false);
   const [invalidGame, setInvalidGame] = useState(false);
   const [newGameStarting, setNewGameStarting] = useState(false);
@@ -127,8 +127,6 @@ const GameScreen = ({ socket }) => {
     );
   }
 
-  bgEffect = 'corona';
-
   switch (bgEffect) {
     case 'corona':
       bgEffectContent = (
@@ -184,8 +182,7 @@ const GameScreen = ({ socket }) => {
       <div className={`gs ${bgEffect ? bgEffect : ''}`}>
         <Players socket={socket} />
         <Game />
-        {bgEffectContent} {/* // TODO: delete this */}
-        {/* {bgEffect && bgEffectContent} */}
+        {bgEffect && bgEffectContent}
       </div>
       {displayInfoBoard && (
         <InfoBoard domRef={ibRef} socket={socket}>

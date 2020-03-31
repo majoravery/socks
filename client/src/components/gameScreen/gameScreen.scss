@@ -13,20 +13,10 @@ $button-shadow: #4AA52E;
   position: relative;
 
   &.corona { 
-    // animation: squiggle 300ms infinite;
-
-    // &:after {
-    //   content: '';
-    //   animation: fade 4000ms infinite ease-in-out;
-    //   background-color: red;
-    //   height: 100%;
-    //   left: 0;
-    //   mix-blend-mode: color;
-    //   position: absolute;
-    //   top: 0;
-    //   width: 100%;
-    //   z-index: 1;
-    // }
+    .players,
+    .game {
+      animation: squiggle 300ms infinite;
+    }
 
     h2, li, p {
       color: rgb(51, 51, 51);
@@ -189,7 +179,6 @@ $button-shadow: #4AA52E;
 }
 
 .ib {
-  opacity: 0.01; // TODO: delete
   align-items: flex-start;
   background: #F7F7F7;
   border-radius: 5px;
@@ -248,8 +237,6 @@ $button-shadow: #4AA52E;
 }
 
 .ib-bg-dizzy {
-  $dizzies: 16;
-
   border-radius: 50%;
   position: absolute;
 
@@ -258,17 +245,8 @@ $button-shadow: #4AA52E;
   }
 
   &.stroke {
+    background: white;
     border: 6px solid rgb(51, 51, 51);
-  }
-
-  @for $i from 1 through $dizzies {
-    &:nth-child(#{$i}) {
-      $diameter: 10px + random(60);
-
-      height: $diameter;
-      width: $diameter;
-      z-index: 3 + random(3);
-    }
   }
 }
 
@@ -310,15 +288,4 @@ $button-shadow: #4AA52E;
   50% { filter: url('#squiggle-2'); }
   75% { filter: url('#squiggle-3'); }
   100% { filter: url('#squiggle-4'); }
-}
-
-@keyframes fade {
-  0% { opacity: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-@keyframes dizzy {
-  0% { transform: scale(1); }
-  100% { transform: scale(0); }
 }
