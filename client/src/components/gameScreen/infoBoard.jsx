@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const InfoBoard = ({ socket, children }) => {
+const InfoBoard = ({ domRef, socket, children }) => {
   const [tick, setTick] = useState(null);
 
   socket.on('ticker-new-game', ({ tick: incomingTick }) => {
@@ -15,7 +15,7 @@ const InfoBoard = ({ socket, children }) => {
   });
 
   return (
-    <div className="ib">
+    <div className="ib" ref={domRef}>
       {children}
       <p className={`ib-new-game ${!tick && 'hidden'}`}>New game starting in: {tick}</p>
     </div>

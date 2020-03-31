@@ -26,3 +26,7 @@ Registers user to game
 | Key | Type | Description|
 |---|---|---|
 | `username` | string | Consists of user's player name that will be displayed in the Players panel |
+
+## Credits
+
+Dizzy effect inspired by [Takane Ichinose](https://codepen.io/takaneichinose/pen/jONdGxM?editors=0010)

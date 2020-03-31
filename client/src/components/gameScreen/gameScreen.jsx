@@ -1,7 +1,8 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useRef, forwardRef } from 'react';
 
-import Players from './players';
+import DizzyEffect from './dizzyEffect';
 import InfoBoard from './infoBoard';
+import Players from './players';
 import './gameScreen.scss';
 
 const GUESS_OPTIONS = [];
@@ -17,6 +18,8 @@ const GameScreen = ({ socket }) => {
   const [result, setResult] = useState(null);
   const [target, setTarget] = useState(null);
   const [tick, setTick] = useState(null);
+
+  const ibRef = useRef(null);
 
   const onGuessSubmit = option => {
     socket.emit('guess', { guess: option });
@@ -130,10 +133,7 @@ const GameScreen = ({ socket }) => {
     case 'corona':
       bgEffectContent = (
         <div className="ib-bg-corona">
-          {new Array(16).fill(null).map(a => {
-            const type = Math.random() >= 0.5 ? 'full' : 'stroke';
-            return <div className={`ib-bg-dizzy ${type}`}></div>;
-          })}
+          <DizzyEffect ibRef={ibRef} />
           <div className="ib-bg-squiggles">
             {`<!-- Credit: https://codepen.io/davidkpiano/pen/wMqXea -->`}
             <svg xmlns="http://www.w3.org/2000/svg" version="1.1">
@@ -169,9 +169,9 @@ const GameScreen = ({ socket }) => {
       break;
     case 'lost':
       bgEffectContent = (
-        <>
-          {new Array(16).fill(null).map((a, i) => (<div key={i} className="ib-bg-rain" />))}
-        </>
+        <Fragment>
+          {new Array(16).fill(null).map((a, i) => (<div key={`drop-${i}`}  className="ib-bg-rain" />))}
+        </Fragment>
       );
       break;
     default: 
@@ -180,7 +180,7 @@ const GameScreen = ({ socket }) => {
   }
 
   return (
-    <>
+    <Fragment>
       <div className={`gs ${bgEffect ? bgEffect : ''}`}>
         <Players socket={socket} />
         <Game />
@@ -188,11 +188,11 @@ const GameScreen = ({ socket }) => {
         {/* {bgEffect && bgEffectContent} */}
       </div>
       {displayInfoBoard && (
-        <InfoBoard socket={socket}>
+        <InfoBoard domRef={ibRef} socket={socket}>
           {infoBoardContent}
         </InfoBoard>
       )}
-    </>
+    </Fragment>
   );
 }
 
