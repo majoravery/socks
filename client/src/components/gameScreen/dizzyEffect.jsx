@@ -1,8 +1,8 @@
 import React, { Fragment, useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 
-const DIZZY_ANIMATION_TIME = 500; // 400ms
-const DIZZY_SPAWN_FREQUENCY = 50; // Every 200ms
+const DIZZY_ANIMATION_TIME = 500; // In milliseconds
+const DIZZY_SPAWN_FREQUENCY = 50; // Also in milliseconds
 const STANDARD_DEVIATION = 20;
 
 const getRandomNumber = (max, min) => Math.floor(Math.random() * (max - min + 1)) + min;
